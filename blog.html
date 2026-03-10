@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Inkwell — Blog Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink: #1a1208;
+  --paper: #faf7f2;
+  --cream: #f0ebe0;
+  --accent: #c8571b;
+  --muted: #8a7f72;
+  --gold: #d4a853;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+.container {
+  width: 860px;
+  max-width: 95%;
+  margin: auto;
+  padding-top: 40px;
+  padding-bottom: 60px;
+}
+
+/* TOPBAR */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 16px 28px;
+  border-radius: 6px;
+  box-shadow: 0 2px 12px rgba(26,18,8,0.08);
+  margin-bottom: 28px;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.home-link {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  font-weight: 500;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+  padding-bottom: 1px;
+}
+
+.home-link:hover { color: var(--accent); border-color: var(--accent); }
+
+.divider-v {
+  width: 1px; height: 18px;
+  background: var(--cream);
+}
+
+.logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.5px;
+}
+
+.logo span { color: var(--accent); font-style: italic; }
+
+.topbar h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.3px;
+}
+
+.btn-logout {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--cream);
+  padding: 9px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.btn-logout:hover {
+  background: #fdf0ec;
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* PAGE TITLE */
+.page-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.6rem;
+  font-weight: 700;
+  letter-spacing: -1px;
+  margin-bottom: 6px;
+  color: var(--ink);
+  text-align: center;
+}
+
+.page-sub {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 300;
+  margin-bottom: 36px;
+}
+
+/* AUTH CARDS */
+.card {
+  background: white;
+  padding: 40px 44px;
+  border-radius: 6px;
+  box-shadow: 0 4px 24px rgba(26,18,8,0.1);
+  width: 420px;
+  margin: 60px auto 0;
+}
+
+.card h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  letter-spacing: -0.5px;
+  margin-bottom: 8px;
+  color: var(--ink);
+}
+
+.card .card-sub {
+  font-size: 0.88rem;
+  color: var(--muted);
+  margin-bottom: 28px;
+  font-weight: 300;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 12px 14px;
+  margin: 8px 0;
+  border: 1.5px solid #e5dfd6;
+  border-radius: 4px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.93rem;
+  background: var(--paper);
+  color: var(--ink);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+
+input:focus, textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(200,87,27,0.1);
+}
+
+textarea {
+  height: 130px;
+  resize: vertical;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 13px 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  width: 100%;
+  margin-top: 10px;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 4px 14px rgba(200,87,27,0.28);
+}
+
+.btn-primary:hover {
+  background: #a84516;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(200,87,27,0.36);
+}
+
+.card p {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 18px;
+}
+
+.card p span {
+  color: var(--accent);
+  cursor: pointer;
+  font-weight: 500;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.card p span:hover { border-color: var(--accent); }
+
+.hidden { display: none; }
+
+/* DASHBOARD */
+.editor {
+  background: white;
+  padding: 28px;
+  border-radius: 6px;
+  box-shadow: 0 2px 12px rgba(26,18,8,0.07);
+  margin-bottom: 24px;
+}
+
+.editor-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  color: var(--ink);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.editor-title::before {
+  content: '';
+  display: block;
+  width: 4px; height: 20px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+.editor .btn-publish {
+  background: var(--ink);
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 12px;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.editor .btn-publish:hover { background: var(--accent); transform: translateY(-1px); }
+
+.preview-box {
+  background: var(--paper);
+  border: 1.5px solid #e5dfd6;
+  border-radius: 4px;
+  padding: 14px 16px;
+  min-height: 70px;
+  font-size: 0.92rem;
+  color: var(--ink);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  margin-top: 4px;
+}
+
+.preview-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 500;
+  margin-bottom: 8px;
+  margin-top: 20px;
+}
+
+/* BLOGS */
+.blogs-header {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  color: var(--ink);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.blog-card {
+  background: white;
+  padding: 24px 28px;
+  border-radius: 6px;
+  margin-bottom: 14px;
+  box-shadow: 0 2px 10px rgba(26,18,8,0.07);
+  border-left: 3px solid transparent;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.blog-card:hover {
+  border-left-color: var(--accent);
+  box-shadow: 0 4px 18px rgba(26,18,8,0.12);
+}
+
+.blog-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  color: var(--ink);
+  margin-bottom: 8px;
+  letter-spacing: -0.3px;
+}
+
+.blog-card p {
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+.blog-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.blog-date {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.btn-delete {
+  background: transparent;
+  color: #b94040;
+  border: 1px solid #e8c8c8;
+  padding: 7px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.btn-delete:hover { background: #fdf0f0; border-color: #b94040; }
+
+.empty-state {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--muted);
+  font-style: italic;
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- LOGIN -->
+  <div id="loginPage" class="card">
+    <h2>Welcome back.</h2>
+    <p class="card-sub">Sign in to continue writing.</p>
+    <input type="text" id="loginUser" placeholder="Username">
+    <input type="password" id="loginPass" placeholder="Password">
+    <button class="btn-primary" onclick="login()">Login</button>
+    <p>Don't have an account? <span onclick="showSignup()">Sign up</span></p>
+    <p style="margin-top:10px;"><a href="index.html" style="color:var(--muted); font-size:0.82rem; text-decoration:none; border-bottom:1px solid #ddd;">← Back to Homepage</a></p>
+  </div>
+
+  <!-- SIGNUP -->
+  <div id="signupPage" class="card hidden">
+    <h2>Create account.</h2>
+    <p class="card-sub">Start writing in seconds.</p>
+    <input type="text" id="signupUser" placeholder="Choose a username">
+    <input type="password" id="signupPass" placeholder="Choose a password">
+    <button class="btn-primary" onclick="signup()">Create Account</button>
+    <p>Already registered? <span onclick="showLogin()">Login</span></p>
+    <p style="margin-top:10px;"><a href="index.html" style="color:var(--muted); font-size:0.82rem; text-decoration:none; border-bottom:1px solid #ddd;">← Back to Homepage</a></p>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard" class="hidden">
+
+    <div class="topbar">
+      <div class="topbar-left">
+        <a href="index.html" class="home-link">← Home</a>
+        <div class="divider-v"></div>
+        <div class="logo">Ink<span>well</span></div>
+        <h2>Dashboard</h2>
+      </div>
+      <button class="btn-logout" onclick="logout()">Logout</button>
+    </div>
+
+    <!-- EDITOR -->
+    <div class="editor">
+      <div class="editor-title">New Post</div>
+      <input type="text" id="title" placeholder="Give your story a title...">
+      <textarea id="content" placeholder="Write something worth reading..." onkeyup="previewPost()"></textarea>
+      <div class="preview-label">Live Preview</div>
+      <div class="preview-box" id="previewBox"></div>
+      <button class="btn-publish" onclick="publish()">Publish Post</button>
+    </div>
+
+    <!-- BLOGS -->
+    <div class="blogs-header">Your Published Posts</div>
+    <div id="blogs"></div>
+
+  </div>
+
+</div>
+
+<script>
+
+function showSignup(){
+  document.getElementById("loginPage").classList.add("hidden")
+  document.getElementById("signupPage").classList.remove("hidden")
+}
+
+function showLogin(){
+  document.getElementById("signupPage").classList.add("hidden")
+  document.getElementById("loginPage").classList.remove("hidden")
+}
+
+function signup(){
+  let user = document.getElementById("signupUser").value.trim()
+  let pass = document.getElementById("signupPass").value.trim()
+  if(!user || !pass){ alert("Please fill in all fields."); return; }
+  localStorage.setItem("blogUser", user)
+  localStorage.setItem("blogPass", pass)
+  alert("Account created! You can now log in.")
+  showLogin()
+}
+
+function login(){
+  let user = document.getElementById("loginUser").value
+  let pass = document.getElementById("loginPass").value
+  let storedUser = localStorage.getItem("blogUser")
+  let storedPass = localStorage.getItem("blogPass")
+  if(user === storedUser && pass === storedPass){
+    document.getElementById("loginPage").classList.add("hidden")
+    document.getElementById("dashboard").classList.remove("hidden")
+    loadBlogs()
+  } else {
+    alert("Invalid username or password.")
+  }
+}
+
+function logout(){
+  document.getElementById("dashboard").classList.add("hidden")
+  document.getElementById("loginPage").classList.remove("hidden")
+}
+
+function previewPost(){
+  document.getElementById("previewBox").innerText = document.getElementById("content").value
+}
+
+function getBlogs(){
+  return JSON.parse(localStorage.getItem("blogs")) || []
+}
+
+function saveBlogs(data){
+  localStorage.setItem("blogs", JSON.stringify(data))
+}
+
+function publish(){
+  let title = document.getElementById("title").value.trim()
+  let content = document.getElementById("content").value.trim()
+  if(!title || !content){ alert("Please add a title and content."); return; }
+  let blogs = getBlogs()
+  blogs.unshift({ title, content, date: new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' }) })
+  saveBlogs(blogs)
+  loadBlogs()
+  document.getElementById("title").value = ""
+  document.getElementById("content").value = ""
+  document.getElementById("previewBox").innerText = ""
+}
+
+function loadBlogs(){
+  let blogs = getBlogs()
+  let container = document.getElementById("blogs")
+  if(blogs.length === 0){
+    container.innerHTML = `<div class="empty-state">No posts yet. Write your first story above.</div>`
+    return
+  }
+  container.innerHTML = blogs.map((b, i) => `
+    <div class="blog-card">
+      <h3>${b.title}</h3>
+      <p>${b.content.length > 180 ? b.content.slice(0,180) + '…' : b.content}</p>
+      <div class="blog-card-footer">
+        <span class="blog-date">${b.date || ''}</span>
+        <button class="btn-delete" onclick="deleteBlog(${i})">Delete</button>
+      </div>
+    </div>
+  `).join('')
+}
+
+function deleteBlog(i){
+  if(!confirm("Delete this post?")) return
+  let blogs = getBlogs()
+  blogs.splice(i, 1)
+  saveBlogs(blogs)
+  loadBlogs()
+}
+
+</script>
+</body>
+</html>

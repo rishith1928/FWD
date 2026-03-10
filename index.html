@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inkwell — A Simple Blog Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #1a1208;
+    --paper: #faf7f2;
+    --cream: #f0ebe0;
+    --accent: #c8571b;
+    --muted: #8a7f72;
+    --gold: #d4a853;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 60px;
+    background: rgba(250, 247, 242, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(200, 87, 27, 0.12);
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--ink);
+    text-decoration: none;
+    letter-spacing: -0.5px;
+  }
+
+  .logo span { color: var(--accent); font-style: italic; }
+
+  nav a.nav-link {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  nav a.nav-link:hover { color: var(--accent); }
+
+  .nav-cta {
+    background: var(--ink);
+    color: var(--paper) !important;
+    padding: 10px 24px;
+    border-radius: 2px;
+    font-size: 0.82rem !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.1em !important;
+    text-transform: uppercase !important;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s !important;
+    display: inline-block;
+  }
+
+  .nav-cta:hover { background: var(--accent) !important; transform: translateY(-1px); }
+
+  nav .nav-links { display: flex; gap: 36px; align-items: center; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top: 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(212, 168, 83, 0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 60px 80px 80px;
+    position: relative;
+  }
+
+  .hero-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.2s;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 32px; height: 1px;
+    background: var(--accent);
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 5vw, 5.5rem);
+    line-height: 1.05;
+    font-weight: 700;
+    letter-spacing: -2px;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.9s ease forwards 0.4s;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .hero-sub {
+    font-size: 1.05rem;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 460px;
+    margin-bottom: 44px;
+    font-weight: 300;
+    opacity: 0;
+    animation: fadeUp 0.9s ease forwards 0.6s;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    opacity: 0;
+    animation: fadeUp 0.9s ease forwards 0.8s;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+    padding: 16px 36px;
+    border-radius: 2px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(200, 87, 27, 0.3);
+  }
+
+  .btn-primary:hover {
+    background: #a84516;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(200, 87, 27, 0.4);
+  }
+
+  .btn-secondary {
+    color: var(--ink);
+    font-size: 0.88rem;
+    font-weight: 500;
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 2px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .btn-secondary:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* HERO VISUAL */
+  .hero-visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+    position: relative;
+    opacity: 0;
+    animation: fadeIn 1.2s ease forwards 0.6s;
+  }
+
+  .paper-stack {
+    position: relative;
+    width: 340px;
+    height: 420px;
+  }
+
+  .paper-card {
+    position: absolute;
+    background: white;
+    border-radius: 4px;
+    padding: 28px;
+    box-shadow: 0 8px 40px rgba(26, 18, 8, 0.12);
+    transition: transform 0.3s ease;
+  }
+
+  .paper-card:nth-child(1) {
+    width: 300px;
+    top: 40px; left: 40px;
+    transform: rotate(4deg);
+    background: var(--cream);
+    z-index: 1;
+  }
+
+  .paper-card:nth-child(2) {
+    width: 300px;
+    top: 20px; left: 20px;
+    transform: rotate(-2deg);
+    z-index: 2;
+  }
+
+  .paper-card:nth-child(3) {
+    width: 310px;
+    top: 0; left: 15px;
+    transform: rotate(1deg);
+    z-index: 3;
+    background: white;
+  }
+
+  .paper-stack:hover .paper-card:nth-child(1) { transform: rotate(6deg) translate(6px, 4px); }
+  .paper-stack:hover .paper-card:nth-child(2) { transform: rotate(-4deg) translate(-4px, 2px); }
+
+  .card-tag {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    line-height: 1.3;
+    margin-bottom: 10px;
+    color: var(--ink);
+  }
+
+  .card-line {
+    height: 1px;
+    background: var(--cream);
+    margin: 12px 0;
+  }
+
+  .card-body-mock { display: flex; flex-direction: column; gap: 6px; }
+
+  .mock-line {
+    height: 7px;
+    background: #e8e2d8;
+    border-radius: 2px;
+  }
+
+  .mock-line.short { width: 65%; }
+  .mock-line.med { width: 85%; }
+  .mock-line.full { width: 100%; }
+
+  .card-author {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .author-dot {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), var(--accent));
+  }
+
+  .author-info { display: flex; flex-direction: column; gap: 3px; }
+
+  .author-name { font-size: 0.72rem; font-weight: 600; color: var(--ink); }
+  .author-date { font-size: 0.65rem; color: var(--muted); }
+
+  /* FEATURES SECTION */
+  .features {
+    padding: 120px 80px;
+    background: var(--ink);
+    color: var(--paper);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .features::before {
+    content: '"';
+    position: absolute;
+    font-family: 'Playfair Display', serif;
+    font-size: 40rem;
+    color: rgba(255,255,255,0.02);
+    top: -120px;
+    left: -40px;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .section-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    line-height: 1.1;
+    letter-spacing: -1px;
+    max-width: 500px;
+    margin-bottom: 70px;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+
+  .feature-item {
+    padding: 44px 40px;
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: background 0.3s;
+    position: relative;
+  }
+
+  .feature-item:hover { background: rgba(255,255,255,0.04); }
+
+  .feature-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    color: rgba(212, 168, 83, 0.2);
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 24px;
+  }
+
+  .feature-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    margin-bottom: 12px;
+    color: white;
+  }
+
+  .feature-desc {
+    font-size: 0.9rem;
+    color: rgba(250, 247, 242, 0.5);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* SAMPLE POSTS */
+  .posts-section {
+    padding: 120px 80px;
+    background: var(--paper);
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 56px;
+  }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 24px;
+  }
+
+  .post-card {
+    background: white;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 2px 16px rgba(26, 18, 8, 0.07);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    cursor: pointer;
+  }
+
+  .post-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 36px rgba(26, 18, 8, 0.14);
+  }
+
+  .post-img {
+    height: 200px;
+    background: var(--cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .post-card.featured .post-img { height: 280px; }
+
+  .post-img-inner {
+    width: 100%; height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .post-img-bg-1 { background: linear-gradient(135deg, #e8d5b0, #c9a87c); }
+  .post-img-bg-2 { background: linear-gradient(135deg, #d4e8d0, #8ab87c); }
+  .post-img-bg-3 { background: linear-gradient(135deg, #d0d4e8, #8c8abc); }
+
+  .post-img-icon {
+    font-size: 3rem;
+    opacity: 0.4;
+  }
+
+  .post-body { padding: 24px; }
+
+  .post-tag {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  .post-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    line-height: 1.35;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+
+  .post-card.featured .post-title { font-size: 1.5rem; }
+
+  .post-excerpt {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.65;
+    margin-bottom: 16px;
+    font-weight: 300;
+  }
+
+  .post-meta {
+    font-size: 0.75rem;
+    color: var(--muted);
+    display: flex;
+    gap: 12px;
+  }
+
+  /* CTA SECTION */
+  .cta-section {
+    padding: 100px 80px;
+    background: var(--cream);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-section::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: 50%;
+    transform: translateX(-50%);
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(200, 87, 27, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .cta-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.8rem);
+    line-height: 1.1;
+    letter-spacing: -1.5px;
+    max-width: 600px;
+    margin-bottom: 20px;
+  }
+
+  .cta-sub {
+    color: var(--muted);
+    font-size: 1rem;
+    max-width: 480px;
+    margin-bottom: 44px;
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 48px 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--paper);
+  }
+
+  .footer-logo span { color: var(--gold); font-style: italic; }
+
+  footer p {
+    font-size: 0.8rem;
+    color: rgba(250, 247, 242, 0.4);
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* DIVIDER */
+  .divider {
+    width: 48px; height: 2px;
+    background: var(--accent);
+    margin-bottom: 16px;
+  }
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="logo">Ink<span>well</span></a>
+  <div class="nav-links">
+    <a href="#features" class="nav-link">Features</a>
+    <a href="#posts" class="nav-link">Explore</a>
+    <a href="blog.html" class="nav-cta">Start Writing</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-text">
+    <div class="hero-eyebrow">Your voice, your story</div>
+    <h1 class="hero-title">Write what <em>matters.</em> Share what lasts.</h1>
+    <p class="hero-sub">Inkwell is a beautifully minimal space for writers who care about words. No noise. No algorithm. Just you, the page, and readers who truly listen.</p>
+    <div class="hero-actions">
+      <a href="blog.html" class="btn-primary">Start Writing Free</a>
+      <a href="#posts" class="btn-secondary">Read Blogs</a>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="paper-stack">
+      <div class="paper-card">
+        <div class="card-tag">Travel</div>
+        <div class="card-title">The Long Road to Somewhere Beautiful</div>
+        <div class="card-line"></div>
+        <div class="card-body-mock">
+          <div class="mock-line full"></div>
+          <div class="mock-line med"></div>
+          <div class="mock-line short"></div>
+        </div>
+      </div>
+      <div class="paper-card">
+        <div class="card-tag">Life</div>
+        <div class="card-title">What Slow Mornings Taught Me About Creativity</div>
+        <div class="card-line"></div>
+        <div class="card-body-mock">
+          <div class="mock-line full"></div>
+          <div class="mock-line full"></div>
+          <div class="mock-line med"></div>
+        </div>
+      </div>
+      <div class="paper-card">
+        <div class="card-tag">Featured</div>
+        <div class="card-title">On Writing Honestly in an Age of Performance</div>
+        <div class="card-line"></div>
+        <div class="card-body-mock">
+          <div class="mock-line full"></div>
+          <div class="mock-line short"></div>
+        </div>
+        <div class="card-author">
+          <div class="author-dot"></div>
+          <div class="author-info">
+            <span class="author-name">Sarah Chen</span>
+            <span class="author-date">March 8, 2026</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="section-label">Why Inkwell</div>
+  <h2 class="section-title">Everything a writer truly needs. Nothing more.</h2>
+
+  <div class="features-grid">
+    <div class="feature-item">
+      <div class="feature-num">01</div>
+      <div class="feature-title">Distraction-Free Editor</div>
+      <p class="feature-desc">A clean, minimal writing space with live preview. Your words take centre stage — no clutter, no distractions.</p>
+    </div>
+    <div class="feature-item">
+      <div class="feature-num">02</div>
+      <div class="feature-title">Instant Publishing</div>
+      <p class="feature-desc">Write and publish in seconds. No setup, no fuss. Your story is live the moment you're ready to share it.</p>
+    </div>
+    <div class="feature-item">
+      <div class="feature-num">03</div>
+      <div class="feature-title">Secure & Private</div>
+      <p class="feature-desc">Your account, your blogs. Simple authentication keeps your work safe and accessible only to you.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SAMPLE POSTS -->
+<section class="posts-section" id="posts">
+  <div class="section-header">
+    <div>
+      <div class="section-label">From the community</div>
+      <h2 class="section-title" style="font-family:'Playfair Display',serif; font-size:2.4rem; letter-spacing:-1px; color:var(--ink); margin:0;">Recent Stories</h2>
+    </div>
+    <a href="blog.html" class="btn-secondary">Write your own →</a>
+  </div>
+
+  <div class="posts-grid">
+    <div class="post-card featured">
+      <div class="post-img post-img-bg-1 post-img-inner">
+        <span class="post-img-icon">✍️</span>
+      </div>
+      <div class="post-body">
+        <div class="post-tag">Essay · Featured</div>
+        <div class="post-title">On Writing Honestly in an Age of Performance</div>
+        <p class="post-excerpt">We live in a world of curated personas and polished narratives. But the writers who stay with us are the ones who dared to tell the truth — messy, raw, and beautifully incomplete.</p>
+        <div class="post-meta"><span>Sarah Chen</span><span>·</span><span>8 min read</span><span>·</span><span>March 8</span></div>
+      </div>
+    </div>
+
+    <div class="post-card">
+      <div class="post-img post-img-bg-2 post-img-inner">
+        <span class="post-img-icon">🌿</span>
+      </div>
+      <div class="post-body">
+        <div class="post-tag">Life</div>
+        <div class="post-title">What Slow Mornings Taught Me About Creativity</div>
+        <p class="post-excerpt">Rushing through the day left me empty. The ritual of a slow morning changed everything.</p>
+        <div class="post-meta"><span>James O.</span><span>·</span><span>5 min read</span></div>
+      </div>
+    </div>
+
+    <div class="post-card">
+      <div class="post-img post-img-bg-3 post-img-inner">
+        <span class="post-img-icon">🗺️</span>
+      </div>
+      <div class="post-body">
+        <div class="post-tag">Travel</div>
+        <div class="post-title">The Long Road to Somewhere Beautiful</div>
+        <p class="post-excerpt">A solo trip through the mountains with nothing but a notebook and bad directions.</p>
+        <div class="post-meta"><span>Priya M.</span><span>·</span><span>6 min read</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="divider"></div>
+  <h2 class="cta-title">Your story deserves to be told.</h2>
+  <p class="cta-sub">Join thousands of writers who chose simplicity over noise. Sign up free and publish your first blog today.</p>
+  <a href="blog.html" class="btn-primary">Open the Editor →</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Ink<span>well</span></div>
+  <p>© 2026 Inkwell Blog Platform. All rights reserved.</p>
+</footer>
+
+</body>
+</html>

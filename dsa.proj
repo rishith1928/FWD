@@ -1,0 +1,177 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class BlogPlatform {
+
+    // User class
+    static class User {
+        String username;
+        String email;
+        String password;
+
+        User(String username, String email, String password) {
+            this.username = username;
+            this.email = email;
+            this.password = password;
+        }
+    }
+
+    // Blog class
+    static class BlogPost {
+        String title;
+        String content;
+        String author;
+
+        BlogPost(String title, String content, String author) {
+            this.title = title;
+            this.content = content;
+            this.author = author;
+        }
+
+        void display() {
+            System.out.println("\n----------------------------");
+            System.out.println("Title  : " + title);
+            System.out.println("Content: " + content);
+            System.out.println("Author : " + author);
+            System.out.println("----------------------------");
+        }
+    }
+
+    static ArrayList<User> users = new ArrayList<>();
+    static ArrayList<BlogPost> posts = new ArrayList<>();
+
+    static Scanner sc = new Scanner(System.in);
+    static User currentUser = null;
+
+    public static void main(String[] args) {
+
+        while (true) {
+
+            System.out.println("\n===== SIMPLE BLOG PLATFORM =====");
+            System.out.println("1. Sign Up");
+            System.out.println("2. Login");
+            System.out.println("3. Exit");
+            System.out.print("Enter choice: ");
+
+            int choice = sc.nextInt();
+            sc.nextLine();
+
+            switch (choice) {
+
+                case 1:
+                    signup();
+                    break;
+
+                case 2:
+                    login();
+                    break;
+
+                case 3:
+                    System.out.println("Thank you for using the platform!");
+                    System.exit(0);
+
+                default:
+                    System.out.println("Invalid choice!");
+            }
+        }
+    }
+
+    static void signup() {
+
+        System.out.print("Enter Username: ");
+        String username = sc.nextLine();
+
+        System.out.print("Enter Email: ");
+        String email = sc.nextLine();
+
+        System.out.print("Enter Password: ");
+        String password = sc.nextLine();
+
+        users.add(new User(username, email, password));
+
+        System.out.println("Signup Successful!");
+    }
+
+    static void login() {
+
+        System.out.print("Enter Email: ");
+        String email = sc.nextLine();
+
+        System.out.print("Enter Password: ");
+        String password = sc.nextLine();
+
+        for (User u : users) {
+
+            if (u.email.equals(email) && u.password.equals(password)) {
+
+                currentUser = u;
+                System.out.println("Login Successful!");
+                dashboard();
+                return;
+            }
+        }
+
+        System.out.println("Invalid login credentials.");
+    }
+
+    static void dashboard() {
+
+        while (true) {
+
+            System.out.println("\n===== DASHBOARD =====");
+            System.out.println("Welcome " + currentUser.username);
+            System.out.println("1. Create Blog Post");
+            System.out.println("2. View Blog Posts");
+            System.out.println("3. Logout");
+
+            System.out.print("Enter choice: ");
+
+            int choice = sc.nextInt();
+            sc.nextLine();
+
+            switch (choice) {
+
+                case 1:
+                    createPost();
+                    break;
+
+                case 2:
+                    viewPosts();
+                    break;
+
+                case 3:
+                    currentUser = null;
+                    System.out.println("Logged out successfully.");
+                    return;
+
+                default:
+                    System.out.println("Invalid choice!");
+            }
+        }
+    }
+
+    static void createPost() {
+
+        System.out.print("Enter Blog Title: ");
+        String title = sc.nextLine();
+
+        System.out.print("Enter Blog Content: ");
+        String content = sc.nextLine();
+
+        posts.add(new BlogPost(title, content, currentUser.username));
+
+        System.out.println("Blog post created successfully!");
+    }
+
+    static void viewPosts() {
+
+        if (posts.isEmpty()) {
+            System.out.println("No blog posts available.");
+            return;
+        }
+
+        for (BlogPost p : posts) {
+            p.display();
+        }
+    }
+}
